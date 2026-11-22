@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UniTrack ERP — Interactive Deployment & Architecture Blueprint</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Chosen Palette: Warm Stone & Academic Navy (Main Background: #FAF9F6, Surface: #FFFFFF, Primary Text: #1E293B, Accent Navy: #1E3A8A, Secondary Teal: #0F766E) -->
+  <!-- Application Structure Plan: Designed as an interactive Engineering Deployment & Operations Console rather than a static linear document. Divided into 4 functional hubs accessible via a sticky top command bar: (1) Interactive 5-Step Deployment Pipeline with live progress tracking and copyable CLI/SQL blocks, (2) Live Supabase PostgreSQL Schema & RLS Explorer allowing administrators to inspect table columns, constraints (Counselling ₹70k vs Management ₹2L), and security policies, (3) B.Tech Fee & Enrollment Simulator powered by Chart.js to visualize how the database schema models university tuition and commute distributions, and (4) Production Readiness & Security Checklist for Vercel + Supabase go-live verification. This task-oriented structure transforms passive reading into an actionable launchpad for DevOps and University IT teams. -->
+  <!-- Visualization & Content Choices:
+       1. Deployment Pipeline Stepper -> Goal: Organize & Guide -> Interactive Step Cards + Copyable Code Console -> Click steps to inspect commands & mark complete -> Reduces deployment errors -> Vanilla JS + Tailwind.
+       2. Database Schema & RLS Matrix -> Goal: Inform & Organize -> Interactive Table/Policy Inspector -> Switch between 'profiles' and 'students' tables & toggle RLS policy simulation -> Clarifies PostgreSQL constraints and RBAC security -> Vanilla JS + HTML Grid.
+       3. Quota Tuition & Commute Revenue Model -> Goal: Compare & Inform -> Doughnut & Stacked Bar Charts -> Adjust Counselling vs Management student counts via sliders -> Demonstrates the real-world financial impact of the SQL schema's tuition_fee and commute_type columns -> Chart.js (Canvas, no SVG).
+       4. Go-Live Security & Vercel Checklist -> Goal: Inform & Verify -> Interactive Progress Checklist -> Check off items to compute live readiness score -> Ensures zero-downtime deployment and disabled public self-signup -> Vanilla JS.
+  -->
+  <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+  <style>
+    body {
+      background-color: #FAF9F6;
+      color: #1E293B;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
+      height: 290px;
+      max-height: 360px;
+    }
+    @media (min-width: 768px) {
+      .chart-container {
+        height: 320px;
+      }
+    }
+    .code-scroll::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+    .code-scroll::-webkit-scrollbar-thumb {
+      background: #475569;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-blue-900 selection:text-white">
+
+  <header class="sticky top-0 z-30 bg-[#FAF9F6]/95 backdrop-blur border-b border-stone-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-[#1E3A8A] text-white flex items-center justify-center font-black text-xl shadow-sm">
+          U
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg font-extrabold tracking-tight text-slate-900">UniTrack Deployment Console</h1>
+            <span class="px-2 py-0.5 text-[11px] font-bold rounded-full bg-teal-100 text-teal-800">Vercel + Supabase</span>
+          </div>
+          <p class="text-xs text-slate-500">Interactive Production Setup, PostgreSQL Schema & Go-Live Guide</p>
+        </div>
+      </div>
+
+      <nav class="flex flex-wrap items-center gap-1.5 bg-stone-200/70 p-1 rounded-xl text-xs font-bold">
+        <button data-nav="pipeline" class="nav-btn px-3.5 py-2 rounded-lg bg-white text-[#1E3A8A] shadow-xs transition">
+          1. 5-Step Pipeline
+        </button>
+        <button data-nav="schema" class="nav-btn px-3.5 py-2 rounded-lg text-slate-600 hover:text-slate-900 transition">
+          2. Supabase SQL & RLS
+        </button>
+        <button data-nav="simulator" class="nav-btn px-3.5 py-2 rounded-lg text-slate-600 hover:text-slate-900 transition">
+          3. Fee & Quota Model
+        </button>
+        <button data-nav="checklist" class="nav-btn px-3.5 py-2 rounded-lg text-slate-600 hover:text-slate-900 transition">
+          4. Go-Live Checklist
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <section class="bg-white border border-stone-200 rounded-2xl p-6 shadow-xs">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+        <div class="lg:col-span-2 space-y-2">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-[#1E3A8A] text-xs font-bold">
+            <span>&#9881;</span>
+            <span>PRODUCTION ARCHITECTURE BRIEF</span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            Deploying UniTrack University ERP to Production
+          </h2>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            This interactive blueprint translates the <strong>UniTrack Deployment Guide</strong> into an operational workflow. Use the sections below to execute local Vite + Tailwind scaffolding, provision the <strong>Supabase PostgreSQL</strong> database with Row-Level Security (RLS), model 4-year B.Tech quota tuition fees (Counselling &#8377;70,000 vs. Management &#8377;2,00,000), and verify your <strong>Vercel</strong> production build.
+          </p>
+        </div>
+
+        <div class="bg-stone-50 border border-stone-200 rounded-2xl p-4 space-y-3">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-500">
+            <span>OVERALL DEPLOYMENT PROGRESS</span>
+            <span id="global-progress-text" class="text-[#1E3A8A]">0% Complete</span>
+          </div>
+          <div class="w-full h-2.5 bg-stone-200 rounded-full overflow-hidden">
+            <div id="global-progress-bar" class="h-full bg-[#1E3A8A] transition-all duration-300" style="width: 0%"></div>
+          </div>
+          <div class="grid grid-cols-3 gap-2 pt-1 text-center text-xs">
+            <div class="p-2 rounded-xl bg-white border border-stone-200">
+              <div class="font-extrabold text-slate-900">Vite + React</div>
+              <div class="text-[11px] text-slate-500">Frontend SPA</div>
+            </div>
+            <div class="p-2 rounded-xl bg-white border border-stone-200">
+              <div class="font-extrabold text-teal-700">PostgreSQL</div>
+              <div class="text-[11px] text-slate-500">Supabase RLS</div>
+            </div>
+            <div class="p-2 rounded-xl bg-white border border-stone-200">
+              <div class="font-extrabold text-[#1E3A8A]">~45 Sec</div>
+              <div class="text-[11px] text-slate-500">Vercel CI/CD</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="section-pipeline" class="space-y-5">
+      <div class="bg-white border border-stone-200 rounded-2xl p-6 shadow-xs space-y-2">
+        <h3 class="text-xl font-extrabold text-slate-900">Interactive 5-Step Deployment Pipeline</h3>
+        <p class="text-sm text-slate-600">
+          Select any deployment stage below to inspect exact terminal commands, configuration files, and operational guardrails. Mark each step as completed to track your live rollout from local Vite setup to Vercel HTTPS hosting.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-4 space-y-2.5" id="step-selector-list">
+        </div>
+
+        <div class="lg:col-span-8 bg-white border border-stone-200 rounded-2xl p-6 shadow-xs flex flex-col justify-between space-y-5" id="step-detail-panel">
+        </div>
+      </div>
+    </section>
+
+    <section id="section-schema" class="hidden space-y-5">
+      <div class="bg-white border border-stone-200 rounded-2xl p-6 shadow-xs space-y-2">
+        <h3 class="text-xl font-extrabold text-slate-900">Supabase PostgreSQL Schema & Row-Level Security (RLS) Explorer</h3>
+        <p class="text-sm text-slate-600">
+          Explore the relational database tables powering UniTrack ERP. Inspect column data types, SQL check constraints (such as 4-year B.Tech bounds, Counselling &#8377;70,000 vs. Management &#8377;2,00,000 defaults, and Hostel/Bus/Private commute categories), and simulate how Row-Level Security protects staff and student data.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="bg-white border border-stone-200 rounded-2xl p-5 shadow-xs space-y-4">
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm font-extrabold uppercase tracking-wider text-slate-500">Database Tables</h4>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">RLS Enabled</span>
+          </div>
+
+          <div class="space-y-2">
+            <button id="btn-table-profiles" class="w-full p-3.5 rounded-xl border-2 border-[#1E3A8A] bg-blue-50/50 text-left transition">
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-extrabold text-sm text-[#1E3A8A]">public.profiles</span>
+                <span class="text-xs font-bold text-slate-500">7 Columns</span>
+              </div>
+              <p class="text-xs text-slate-600 mt-1">Staff profiles (Admin & Faculty only) linked to Supabase Auth UUIDs.</p>
+            </button>
+
+            <button id="btn-table-students" class="w-full p-3.5 rounded-xl border border-stone-200 hover:border-stone-300 text-left transition">
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-extrabold text-sm text-slate-800">public.students</span>
+                <span class="text-xs font-bold text-slate-500">15 Columns</span>
+              </div>
+              <p class="text-xs text-slate-600 mt-1">4-year B.Tech records, quota fees, commute logistics, CGPA & JSONB parent contacts.</p>
+            </button>
+          </div>
+
+          <div class="pt-3 border-t border-stone-200 space-y-2.5">
+            <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Simulate RLS Policy Check</h4>
+            <select id="rls-role-select" class="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-stone-50">
+              <option value="authenticated_admin">Role: Authenticated Admin (Registrar)</option>
+              <option value="authenticated_faculty">Role: Authenticated Faculty</option>
+              <option value="anon_public">Role: Unauthenticated / Public Visitor (anon)</option>
+            </select>
+            <div id="rls-simulation-result" class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 font-medium">
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-2 bg-white border border-stone-200 rounded-2xl p-5 shadow-xs space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h4 id="schema-table-title" class="text-lg font-extrabold font-mono text-slate-900">public.profiles</h4>
+              <p id="schema-table-desc" class="text-xs text-slate-500">Stores authorized institutional staff linked to auth.users(id)</p>
+            </div>
+            <button id="copy-sql-btn" class="px-3.5 py-1.5 rounded-xl bg-[#1E3A8A] text-white text-xs font-bold hover:opacity-95">
+              Copy Full SQL DDL
+            </button>
+          </div>
+
+          <div class="overflow-x-auto border border-stone-200 rounded-xl">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-stone-100 text-slate-600 uppercase border-b border-stone-200">
+                <tr>
+                  <th class="py-2.5 px-3">Column Name</th>
+                  <th class="py-2.5 px-3">PostgreSQL Type</th>
+                  <th class="py-2.5 px-3">Constraints & Defaults</th>
+                  <th class="py-2.5 px-3">Purpose</th>
+                </tr>
+              </thead>
+              <tbody id="schema-columns-body" class="divide-y divide-stone-200">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="section-simulator" class="hidden space-y-5">
+      <div class="bg-white border border-stone-200 rounded-2xl p-6 shadow-xs space-y-2">
+        <h3 class="text-xl font-extrabold text-slate-900">Database Fee Quota & Commute Distribution Simulator</h3>
+        <p class="text-sm text-slate-600">
+          The <code class="px-1.5 py-0.5 rounded bg-stone-100 font-mono text-xs">students</code> schema enforces two B.Tech admission fee tiers—<strong>Counselling (&#8377;70,000)</strong> and <strong>Management (&#8377;2,00,000)</strong>—alongside three commute modes (<strong>Hostel</strong>, <strong>Bus</strong>, and <strong>Private</strong>). Adjust cohort parameters below to preview how institutional revenue and student logistics scale in PostgreSQL.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-4 bg-white border border-stone-200 rounded-2xl p-5 shadow-xs space-y-4">
+          <h4 class="text-sm font-extrabold uppercase tracking-wider text-slate-500">Cohort Parameters</h4>
+
+          <div>
+            <div class="flex justify-between text-xs font-bold mb-1">
+              <span>Counselling Quota Students (&#8377;70,000/yr)</span>
+              <span id="sim-counselling-val" class="text-teal-700">420</span>
+            </div>
+            <input id="sim-counselling-range" type="range" min="50" max="800" step="10" value="420" class="w-full accent-[#0F766E]" />
+          </div>
+
+          <div>
+            <div class="flex justify-between text-xs font-bold mb-1">
+              <span>Management Quota Students (&#8377;2,00,000/yr)</span>
+              <span id="sim-management-val" class="text-[#1E3A8A]">180</span>
+            </div>
+            <input id="sim-management-range" type="range" min="20" max="400" step="10" value="180" class="w-full accent-[#1E3A8A]" />
+          </div>
+
+          <div>
+            <div class="flex justify-between text-xs font-bold mb-1">
+              <span>Campus Hostel Residency (%)</span>
+              <span id="sim-hostel-val" class="text-slate-800">45%</span>
+            </div>
+            <input id="sim-hostel-range" type="range" min="10" max="80" step="5" value="45" class="w-full accent-slate-700" />
+          </div>
+
+          <div>
+            <div class="flex justify-between text-xs font-bold mb-1">
+              <span>University Bus Commuters (%)</span>
+              <span id="sim-bus-val" class="text-slate-800">35%</span>
+            </div>
+            <input id="sim-bus-range" type="range" min="10" max="70" step="5" value="35" class="w-full accent-slate-700" />
+          </div>
+
+          <div class="p-4 rounded-xl bg-stone-50 border border-stone-200 space-y-1.5">
+            <div class="text-xs font-bold text-slate-500">PROJECTED ANNUAL TUITION REVENUE</div>
+            <div id="sim-total-tuition" class="text-2xl font-extrabold text-[#1E3A8A]">&#8377;6,54,00,000</div>
+            <div id="sim-cohort-summary" class="text-xs text-slate-600">Total Cohort: 600 B.Tech Students</div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-4 bg-white border border-stone-200 rounded-2xl p-5 shadow-xs flex flex-col justify-between">
+          <div>
+            <h4 class="text-base font-bold text-slate-900">Tuition Fee Composition</h4>
+            <p class="text-xs text-slate-500 mb-3">Counselling (&#8377;70k) vs. Management (&#8377;2L) Revenue Share</p>
+          </div>
+          <div class="chart-container">
+            <canvas id="quotaRevenueChart"></canvas>
+          </div>
+        </div>
+
+        <div class="lg:col-span-4 bg-white border border-stone-200 rounded-2xl p-5 shadow-xs flex flex-col justify-between">
+          <div>
+            <h4 class="text-base font-bold text-slate-900">Commute & Residency Split</h4>
+            <p class="text-xs text-slate-500 mb-3">Hostel vs. Bus vs. Private Day Scholars</p>
+          </div>
+          <div class="chart-container">
+            <canvas id="commuteSplitChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="section-checklist" class="hidden space-y-5">
+      <div class="bg-white border border-stone-200 rounded-2xl p-6 shadow-xs space-y-2">
+        <h3 class="text-xl font-extrabold text-slate-900">Production Security & Vercel Go-Live Verification</h3>
+        <p class="text-sm text-slate-600">
+          Before sharing your live <code class="px-1.5 py-0.5 rounded bg-stone-100 font-mono text-xs">*.vercel.app</code> or custom university domain with faculty and registrars, verify every security, environment variable, and database policy item below.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="checklist-grid">
+      </div>
+    </section>
+
+  </main>
+
+  <div id="copy-toast" class="fixed bottom-5 right-5 z-50 hidden items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold shadow-xl">
+    <span class="text-emerald-400">&#10003;</span>
+    <span id="copy-toast-msg">Copied to clipboard</span>
+  </div>
+
+  <script>
+    const DEPLOYMENT_STEPS = [
+      {
+        id: 1,
+        title: 'Local React + Vite Scaffolding',
+        badge: 'Frontend Setup',
+        summary: 'Initialize a fast Vite React workspace, install Lucide icons, Recharts, Tailwind CSS v4, and the Supabase JS client, then verify locally.',
+        commands: [
+          {
+            label: '1. Create Vite Project & Install Dependencies',
+            code: `npm create vite@latest unitrack-erp -- --template react\ncd unitrack-erp\nnpm install lucide-react recharts @supabase/supabase-js\nnpm install -D tailwindcss @tailwindcss/vite`
+          },
+          {
+            label: '2. Configure vite.config.js & src/index.css',
+            code: `// vite.config.js\nimport { defineConfig } from 'vite';\nimport react from '@vitejs/plugin-react';\nimport tailwindcss from '@tailwindcss/vite';\n\nexport default defineConfig({\n  plugins: [react(), tailwindcss()],\n});\n\n/* src/index.css */\n@import "tailwindcss";`
+          },
+          {
+            label: '3. Copy App.jsx & Run Local Dev Server',
+            code: `# Paste complete UniTrack code into src/App.jsx\nnpm run dev\n# Verify at http://localhost:5173`
+          }
+        ],
+        tip: 'Ensure App.jsx replaces the default Vite boilerplate in src/App.jsx before running npm run dev.'
+      },
+      {
+        id: 2,
+        title: 'Supabase PostgreSQL & RLS Setup',
+        badge: 'Backend Database',
+        summary: 'Create a Supabase project in a nearby region (e.g., Mumbai ap-south-1), execute the SQL DDL for profiles and students, and provision your first Admin user.',
+        commands: [
+          {
+            label: '1. Run Production SQL Schema & RLS Policies in SQL Editor',
+            code: `-- 1. Staff Profiles (Admin & Faculty Only)\nCREATE TABLE profiles (\n  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,\n  full_name TEXT NOT NULL,\n  email TEXT UNIQUE NOT NULL,\n  role TEXT CHECK (role IN ('Admin', 'Faculty')) NOT NULL,\n  department TEXT,\n  is_active BOOLEAN DEFAULT TRUE,\n  created_at TIMESTAMPTZ DEFAULT NOW()\n);\n\n-- 2. Students Table (4-Year B.Tech + Quota Fees + Commute)\nCREATE TABLE students (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  reg_no TEXT UNIQUE NOT NULL,\n  roll_no TEXT NOT NULL,\n  full_name TEXT NOT NULL,\n  branch_id TEXT NOT NULL,\n  academic_year INT CHECK (academic_year BETWEEN 1 AND 4),\n  semester INT CHECK (semester BETWEEN 1 AND 8),\n  section TEXT NOT NULL,\n  seat_type TEXT CHECK (seat_type IN ('Counselling', 'Management')) NOT NULL DEFAULT 'Counselling',\n  tuition_fee NUMERIC(10,2) NOT NULL DEFAULT 70000,\n  commute_type TEXT CHECK (commute_type IN ('Hostel', 'Bus', 'Private')) NOT NULL,\n  commute_details TEXT,\n  cgpa NUMERIC(4,2) DEFAULT 0.00,\n  backlogs INT DEFAULT 0,\n  parent_details JSONB DEFAULT '{}'::jsonb,\n  created_at TIMESTAMPTZ DEFAULT NOW()\n);\n\n-- 3. Enable Row Level Security (RLS)\nALTER TABLE profiles ENABLE ROW LEVEL SECURITY;\nALTER TABLE students ENABLE ROW LEVEL SECURITY;\n\nCREATE POLICY "Authenticated staff can read profiles"\n  ON profiles FOR SELECT TO authenticated USING (true);\n\nCREATE POLICY "Authenticated staff can manage students"\n  ON students FOR ALL TO authenticated USING (true) WITH CHECK (true);`
+          },
+          {
+            label: '2. Copy API Keys & Provision Registrar Account',
+            code: `# Project Settings -> API:\n# Copy Project URL (https://xxxxx.supabase.co) & anon public key\n\n# Authentication -> Providers -> Email:\n# Turn OFF "Enable email signup" to block public self-registration!\n# Authentication -> Users -> Add User -> admin@unitrack.edu.in`
+          }
+        ],
+        tip: 'Critical Security Rule: Keep "Enable email signup" turned OFF in Supabase Auth so only the Registrar can create staff accounts.'
+      },
+      {
+        id: 3,
+        title: 'Push Source Code to GitHub',
+        badge: 'Version Control',
+        summary: 'Initialize a Git repository and push your local UniTrack ERP project to GitHub to enable automated CI/CD builds with Vercel.',
+        commands: [
+          {
+            label: 'Initialize Git & Push to main Branch',
+            code: `git init\ngit add .\ngit commit -m "Initial commit: UniTrack University ERP"\ngit branch -M main\ngit remote add origin https://github.com/YOUR_USERNAME/unitrack-erp.git\ngit push -u origin main`
+          }
+        ],
+        tip: 'Never commit local .env files containing secret keys; configure environment variables directly inside Vercel.'
+      },
+      {
+        id: 4,
+        title: 'Deploy & Configure Env Vars on Vercel',
+        badge: 'Cloud Hosting',
+        summary: 'Import your GitHub repository into Vercel, confirm Vite build settings, and bind your Supabase Project URL and Anon Key.',
+        commands: [
+          {
+            label: 'Vercel Build Settings & Environment Variables',
+            code: `# Framework Preset: Vite\n# Build Command:    npm run build\n# Output Directory: dist\n\n# Environment Variables:\nVITE_SUPABASE_URL=https://your-project-id.supabase.co\nVITE_SUPABASE_ANON_KEY=your-supabase-anon-public-key`
+          }
+        ],
+        tip: 'Expand the Environment Variables panel on Vercel before clicking Deploy so the initial production bundle includes your Supabase keys.'
+      },
+      {
+        id: 5,
+        title: 'Verify Production & Custom Domain',
+        badge: 'Go-Live',
+        summary: 'Test your live HTTPS deployment (~45 seconds build time), attach your institutional domain, and verify automatic Git push deployments.',
+        commands: [
+          {
+            label: 'Production Domain & Continuous Deployment Checks',
+            code: `# Live Preview URL: https://unitrack-erp.vercel.app\n# Custom Domain (Vercel -> Project Settings -> Domains):\nerp.youruniversity.edu.in\n\n# Any future git push to main triggers zero-downtime redeployment.`
+          }
+        ],
+        tip: 'Add your custom university domain to Supabase Authentication -> URL Configuration (Site URL & Redirect URLs) after attaching it on Vercel.'
+      }
+    ];
+
+    const SCHEMA_METADATA = {
+      profiles: {
+        title: 'public.profiles',
+        desc: 'Authorized institutional staff records (Admin & Faculty only) referencing Supabase auth.users(id).',
+        columns: [
+          { name: 'id', type: 'UUID', constraint: 'PRIMARY KEY, REFERENCES auth.users(id) ON DELETE CASCADE', desc: 'Matches Supabase Auth User UUID' },
+          { name: 'full_name', type: 'TEXT', constraint: 'NOT NULL', desc: 'Faculty or Registrar display name' },
+          { name: 'email', type: 'TEXT', constraint: 'UNIQUE NOT NULL', desc: 'Institutional login email (@unitrack.edu.in)' },
+          { name: 'role', type: 'TEXT', constraint: "CHECK (role IN ('Admin', 'Faculty')) NOT NULL", desc: 'Enforces strict RBAC role separation' },
+          { name: 'department', type: 'TEXT', constraint: 'NULLABLE', desc: 'Assigned B.Tech branch (CSE, ECE, AIML, etc.)' },
+          { name: 'is_active', type: 'BOOLEAN', constraint: 'DEFAULT TRUE', desc: 'Allows Registrar to deactivate staff access' },
+          { name: 'created_at', type: 'TIMESTAMPTZ', constraint: 'DEFAULT NOW()', desc: 'Audit timestamp of account provisioning' }
+        ]
+      },
+      students: {
+        title: 'public.students',
+        desc: '4-year B.Tech student master ledger including Counselling (₹70k) / Management (₹2L) quotas and Hostel/Bus/Private commute tracking.',
+        columns: [
+          { name: 'id', type: 'UUID', constraint: 'PRIMARY KEY DEFAULT gen_random_uuid()', desc: 'Unique internal student record ID' },
+          { name: 'reg_no', type: 'TEXT', constraint: 'UNIQUE NOT NULL', desc: 'University Registration No (e.g., 24UT1A0501)' },
+          { name: 'roll_no', type: 'TEXT', constraint: 'NOT NULL', desc: 'Class Roll Number (e.g., 24CSE-A01)' },
+          { name: 'full_name', type: 'TEXT', constraint: 'NOT NULL', desc: 'Student full legal name' },
+          { name: 'branch_id', type: 'TEXT', constraint: 'NOT NULL', desc: 'B.Tech branch code (CSE, ECE, AIML, IT, EEE, MECH, CIVIL, DS)' },
+          { name: 'academic_year', type: 'INT', constraint: 'CHECK (academic_year BETWEEN 1 AND 4)', desc: '4-Year B.Tech program year (1 to 4)' },
+          { name: 'semester', type: 'INT', constraint: 'CHECK (semester BETWEEN 1 AND 8)', desc: 'Current semester (1 to 8)' },
+          { name: 'section', type: 'TEXT', constraint: 'NOT NULL', desc: 'Academic section (A, B, C)' },
+          { name: 'seat_type', type: 'TEXT', constraint: "CHECK (seat_type IN ('Counselling', 'Management')) DEFAULT 'Counselling'", desc: 'Admission quota category' },
+          { name: 'tuition_fee', type: 'NUMERIC(10,2)', constraint: 'NOT NULL DEFAULT 70000', desc: '₹70,000 (Counselling) or ₹2,00,000 (Management)' },
+          { name: 'commute_type', type: 'TEXT', constraint: "CHECK (commute_type IN ('Hostel', 'Bus', 'Private')) NOT NULL", desc: 'Campus residency or daily transport mode' },
+          { name: 'commute_details', type: 'TEXT', constraint: 'NULLABLE', desc: 'Hostel block/room, Bus route #, or Day Scholar pass' },
+          { name: 'cgpa', type: 'NUMERIC(4,2)', constraint: 'DEFAULT 0.00', desc: 'Cumulative Grade Point Average (0.00–10.00)' },
+          { name: 'backlogs', type: 'INT', constraint: 'DEFAULT 0', desc: 'Count of active subject backlogs' },
+          { name: 'parent_details', type: 'JSONB', constraint: "DEFAULT '{}'::jsonb", desc: 'Structured father, mother, guardian & emergency contacts' }
+        ]
+      }
+    };
+
+    const CHECKLIST_ITEMS = [
+      { id: 'chk1', category: 'Supabase Auth', title: 'Disable Public Email Self-Signup', desc: 'Turn OFF "Enable email signup" under Authentication -> Providers -> Email so unauthorized users cannot register.' },
+      { id: 'chk2', category: 'Database Security', title: 'Verify RLS Enabled on profiles & students', desc: 'Confirm Row-Level Security is active so unauthenticated anon API requests cannot read or modify student data.' },
+      { id: 'chk3', category: 'Quota & Fee Integrity', title: 'Test Counselling (₹70k) & Management (₹2L) Constraints', desc: 'Insert test student records to verify PostgreSQL CHECK constraints enforce valid seat_type and commute_type values.' },
+      { id: 'chk4', category: 'Vercel Build', title: 'Configure VITE_SUPABASE_URL & ANON_KEY', desc: 'Verify both environment variables are saved in Vercel Project Settings for Production and Preview environments.' },
+      { id: 'chk5', category: 'Admin Access', title: 'Provision Registrar Account & Test Login', desc: 'Create admin@unitrack.edu.in in Supabase Auth Users and verify full RBAC access on the live Vercel URL.' },
+      { id: 'chk6', category: 'Custom Domain', title: 'Bind Custom Institutional HTTPS Domain', desc: 'Attach erp.youruniversity.edu.in in Vercel Domains and whitelist the URL in Supabase Auth redirect settings.' }
+    ];
+
+    let activeStepId = 1;
+    let completedSteps = new Set();
+    let completedChecks = new Set();
+    let activeTable = 'profiles';
+    let quotaChartInstance = null;
+    let commuteChartInstance = null;
+
+    function showToast(msg) {
+      const toast = document.getElementById('copy-toast');
+      document.getElementById('copy-toast-msg').textContent = msg;
+      toast.classList.remove('hidden');
+      toast.classList.add('flex');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+        toast.classList.remove('flex');
+      }, 2600);
+    }
+
+    function copyText(text, label = 'Copied to clipboard') {
+      navigator.clipboard.writeText(text).then(() => showToast(label));
+    }
+
+    function updateOverallProgress() {
+      const totalItems = DEPLOYMENT_STEPS.length + CHECKLIST_ITEMS.length;
+      const doneItems = completedSteps.size + completedChecks.size;
+      const pct = Math.round((doneItems / totalItems) * 100);
+      document.getElementById('global-progress-text').textContent = `${pct}% Complete (${doneItems}/${totalItems})`;
+      document.getElementById('global-progress-bar').style.width = `${pct}%`;
+    }
+
+    function renderStepList() {
+      const container = document.getElementById('step-selector-list');
+      container.innerHTML = DEPLOYMENT_STEPS.map(step => {
+        const isSelected = step.id === activeStepId;
+        const isDone = completedSteps.has(step.id);
+        return `
+          <button onclick="selectStep(${step.id})" class="w-full p-4 rounded-2xl border text-left transition flex items-start justify-between gap-3 ${
+            isSelected
+              ? 'bg-white border-2 border-[#1E3A8A] shadow-xs'
+              : 'bg-white/70 border-stone-200 hover:bg-white'
+          }">
+            <div class="flex items-start gap-3">
+              <span class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-extrabold shrink-0 ${
+                isDone ? 'bg-emerald-600 text-white' : isSelected ? 'bg-[#1E3A8A] text-white' : 'bg-stone-200 text-slate-700'
+              }">
+                ${isDone ? '&#10003;' : step.id}
+              </span>
+              <div>
+                <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">${step.badge}</div>
+                <div class="text-sm font-extrabold text-slate-900 mt-0.5">${step.title}</div>
+              </div>
+            </div>
+            <span class="text-xs font-bold ${isSelected ? 'text-[#1E3A8A]' : 'text-slate-400'}">&rarr;</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function renderStepDetail() {
+      const step = DEPLOYMENT_STEPS.find(s => s.id === activeStepId);
+      const isDone = completedSteps.has(step.id);
+      const panel = document.getElementById('step-detail-panel');
+
+      const blocksHtml = step.commands.map((cmd, idx) => `
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-700">${cmd.label}</span>
+            <button onclick="copyStepBlock(${step.id}, ${idx})" class="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-stone-200 text-slate-800 text-[11px] font-bold transition">
+              Copy Snippet
+            </button>
+          </div>
+          <pre class="p-4 rounded-xl bg-slate-900 text-sky-200 text-xs font-mono overflow-x-auto code-scroll leading-relaxed"><code>${cmd.code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
+        </div>
+      `).join('');
+
+      panel.innerHTML = `
+        <div class="space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-stone-200">
+            <div>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-50 text-[#1E3A8A]">Step ${step.id} of 5 &bull; ${step.badge}</span>
+              <h4 class="text-xl font-extrabold text-slate-900 mt-1.5">${step.title}</h4>
+            </div>
+            <button onclick="toggleStepComplete(${step.id})" class="px-4 py-2 rounded-xl text-xs font-bold transition ${
+              isDone
+                ? 'bg-emerald-600 text-white'
+                : 'bg-stone-100 hover:bg-stone-200 text-slate-800 border border-stone-300'
+            }">
+              ${isDone ? '&#10003; Step Completed' : 'Mark Step Complete'}
+            </button>
+          </div>
+
+          <p class="text-sm text-slate-600 leading-relaxed">${step.summary}</p>
+
+          <div class="space-y-4">${blocksHtml}</div>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-start gap-2.5">
+          <span class="font-extrabold text-amber-600 text-sm">&#9888;</span>
+          <div><strong>Operational Note:</strong> ${step.tip}</div>
+        </div>
+      `;
+    }
+
+    window.selectStep = function(id) {
+      activeStepId = id;
+      renderStepList();
+      renderStepDetail();
+    };
+
+    window.toggleStepComplete = function(id) {
+      if (completedSteps.has(id)) completedSteps.delete(id);
+      else completedSteps.add(id);
+      renderStepList();
+      renderStepDetail();
+      updateOverallProgress();
+    };
+
+    window.copyStepBlock = function(stepId, blockIdx) {
+      const step = DEPLOYMENT_STEPS.find(s => s.id === stepId);
+      if (step && step.commands[blockIdx]) {
+        copyText(step.commands[blockIdx].code, `Copied: ${step.commands[blockIdx].label}`);
+      }
+    };
+
+    function renderSchemaTable() {
+      const meta = SCHEMA_METADATA[activeTable];
+      document.getElementById('schema-table-title').textContent = meta.title;
+      document.getElementById('schema-table-desc').textContent = meta.desc;
+
+      const btnProfiles = document.getElementById('btn-table-profiles');
+      const btnStudents = document.getElementById('btn-table-students');
+      if (activeTable === 'profiles') {
+        btnProfiles.className = 'w-full p-3.5 rounded-xl border-2 border-[#1E3A8A] bg-blue-50/50 text-left transition';
+        btnStudents.className = 'w-full p-3.5 rounded-xl border border-stone-200 hover:border-stone-300 text-left transition';
+      } else {
+        btnStudents.className = 'w-full p-3.5 rounded-xl border-2 border-[#1E3A8A] bg-blue-50/50 text-left transition';
+        btnProfiles.className = 'w-full p-3.5 rounded-xl border border-stone-200 hover:border-stone-300 text-left transition';
+      }
+
+      document.getElementById('schema-columns-body').innerHTML = meta.columns.map(col => `
+        <tr class="hover:bg-stone-50">
+          <td class="py-2.5 px-3 font-mono font-bold text-[#1E3A8A]">${col.name}</td>
+          <td class="py-2.5 px-3 font-mono text-teal-700 font-semibold">${col.type}</td>
+          <td class="py-2.5 px-3 font-mono text-[11px] text-slate-600">${col.constraint}</td>
+          <td class="py-2.5 px-3 text-slate-600">${col.desc}</td>
+        </tr>
+      `).join('');
+    }
+
+    function updateRlsSimulation() {
+      const role = document.getElementById('rls-role-select').value;
+      const box = document.getElementById('rls-simulation-result');
+      if (role === 'authenticated_admin') {
+        box.className = 'p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 font-medium';
+        box.innerHTML = '<strong>ALLOWED (SELECT, INSERT, UPDATE, DELETE):</strong> Authenticated Registrar passes <code class="font-mono">TO authenticated USING (true)</code> across both <code class="font-mono">profiles</code> and <code class="font-mono">students</code>.';
+      } else if (role === 'authenticated_faculty') {
+        box.className = 'p-3 rounded-xl bg-blue-50 border border-blue-200 text-xs text-blue-900 font-medium';
+        box.innerHTML = '<strong>ALLOWED (SCOPED ACCESS):</strong> Authenticated Faculty passes Supabase RLS and is scoped in the UI to assigned B.Tech departments for attendance, marks, and remarks.';
+      } else {
+        box.className = 'p-3 rounded-xl bg-red-50 border border-red-200 text-xs text-red-900 font-medium';
+        box.innerHTML = '<strong>BLOCKED BY POSTGRESQL RLS:</strong> Unauthenticated <code class="font-mono">anon</code> requests receive 0 rows and <code class="font-mono">401/403 Permission Denied</code> on mutations.';
+      }
+    }
+
+    function initOrUpdateSimulatorCharts() {
+      const counsellingCount = Number(document.getElementById('sim-counselling-range').value);
+      const managementCount = Number(document.getElementById('sim-management-range').value);
+      const hostelPct = Number(document.getElementById('sim-hostel-range').value);
+      const busPct = Math.min(100 - hostelPct, Number(document.getElementById('sim-bus-range').value));
+      const privatePct = Math.max(0, 100 - hostelPct - busPct);
+
+      document.getElementById('sim-counselling-val').textContent = counsellingCount;
+      document.getElementById('sim-management-val').textContent = managementCount;
+      document.getElementById('sim-hostel-val').textContent = `${hostelPct}%`;
+      document.getElementById('sim-bus-val').textContent = `${busPct}%`;
+
+      const totalStudents = counsellingCount + managementCount;
+      const counsellingRev = counsellingCount * 70000;
+      const managementRev = managementCount * 200000;
+      const totalRev = counsellingRev + managementRev;
+
+      document.getElementById('sim-total-tuition').textContent = '₹' + totalRev.toLocaleString('en-IN');
+      document.getElementById('sim-cohort-summary').textContent = `Total Cohort: ${totalStudents} B.Tech Students (${privatePct}% Private Day Scholars)`;
+
+      const hostelStudents = Math.round((totalStudents * hostelPct) / 100);
+      const busStudents = Math.round((totalStudents * busPct) / 100);
+      const privateStudents = Math.max(0, totalStudents - hostelStudents - busStudents);
+
+      const quotaCtx = document.getElementById('quotaRevenueChart').getContext('2d');
+      if (quotaChartInstance) {
+        quotaChartInstance.data.datasets[0].data = [counsellingRev / 100000, managementRev / 100000];
+        quotaChartInstance.update();
+      } else {
+        quotaChartInstance = new Chart(quotaCtx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Counselling (₹70k)', 'Management (₹2L)'],
+            datasets: [{
+              data: [counsellingRev / 100000, managementRev / 100000],
+              backgroundColor: ['#0F766E', '#1E3A8A'],
+              borderWidth: 2,
+              borderColor: '#FFFFFF'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'bottom', labels: { font: { size: 11, weight: 'bold' } } },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) => `${ctx.label}: ₹${ctx.parsed.toLocaleString('en-IN')} Lakhs`
+                }
+              }
+            }
+          }
+        });
+      }
+
+      const commuteCtx = document.getElementById('commuteSplitChart').getContext('2d');
+      if (commuteChartInstance) {
+        commuteChartInstance.data.datasets[0].data = [hostelStudents, busStudents, privateStudents];
+        commuteChartInstance.update();
+      } else {
+        commuteChartInstance = new Chart(commuteCtx, {
+          type: 'bar',
+          data: {
+            labels: ['Campus Hostel', 'University Bus', 'Private Scholar'],
+            datasets: [{
+              label: 'Students',
+              data: [hostelStudents, busStudents, privateStudents],
+              backgroundColor: ['#1E3A8A', '#0284C7', '#0F766E'],
+              borderRadius: 8
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) => `${ctx.parsed.y} Students`
+                }
+              }
+            },
+            scales: {
+              y: { beginAtZero: true, ticks: { precision: 0, font: { size: 11 } } },
+              x: { ticks: { font: { size: 11, weight: 'bold' } } }
+            }
+          }
+        });
+      }
+    }
+
+    function renderChecklist() {
+      const grid = document.getElementById('checklist-grid');
+      grid.innerHTML = CHECKLIST_ITEMS.map(item => {
+        const checked = completedChecks.has(item.id);
+        return `
+          <button onclick="toggleChecklistItem('${item.id}')" class="p-5 rounded-2xl border text-left transition flex items-start gap-3.5 ${
+            checked
+              ? 'bg-emerald-50/70 border-emerald-300'
+              : 'bg-white border-stone-200 hover:border-stone-300'
+          }">
+            <span class="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-extrabold shrink-0 mt-0.5 ${
+              checked ? 'bg-emerald-600 text-white' : 'border-2 border-stone-300 text-transparent'
+            }">
+              &#10003;
+            </span>
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-[#1E3A8A]">${item.category}</span>
+              <h4 class="text-sm font-extrabold text-slate-900 mt-0.5 ${checked ? 'line-through text-slate-500' : ''}">${item.title}</h4>
+              <p class="text-xs text-slate-600 mt-1 leading-relaxed">${item.desc}</p>
+            </div>
+          </button>
+        `;
+      }).join('');
+    }
+
+    window.toggleChecklistItem = function(id) {
+      if (completedChecks.has(id)) completedChecks.delete(id);
+      else completedChecks.add(id);
+      renderChecklist();
+      updateOverallProgress();
+    };
+
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.getAttribute('data-nav');
+        document.querySelectorAll('.nav-btn').forEach(b => {
+          b.className = 'nav-btn px-3.5 py-2 rounded-lg text-slate-600 hover:text-slate-900 transition';
+        });
+        btn.className = 'nav-btn px-3.5 py-2 rounded-lg bg-white text-[#1E3A8A] shadow-xs transition';
+
+        ['pipeline', 'schema', 'simulator', 'checklist'].forEach(sec => {
+          const el = document.getElementById(`section-${sec}`);
+          if (sec === target) el.classList.remove('hidden');
+          else el.classList.add('hidden');
+        });
+
+        if (target === 'simulator') {
+          setTimeout(initOrUpdateSimulatorCharts, 50);
+        }
+      });
+    });
+
+    document.getElementById('btn-table-profiles').addEventListener('click', () => {
+      activeTable = 'profiles';
+      renderSchemaTable();
+    });
+
+    document.getElementById('btn-table-students').addEventListener('click', () => {
+      activeTable = 'students';
+      renderSchemaTable();
+    });
+
+    document.getElementById('rls-role-select').addEventListener('change', updateRlsSimulation);
+
+    document.getElementById('copy-sql-btn').addEventListener('click', () => {
+      copyText(DEPLOYMENT_STEPS[1].commands[0].code, 'Copied complete Supabase PostgreSQL DDL & RLS SQL');
+    });
+
+    ['sim-counselling-range', 'sim-management-range', 'sim-hostel-range', 'sim-bus-range'].forEach(id => {
+      document.getElementById(id).addEventListener('input', initOrUpdateSimulatorCharts);
+    });
+
+    renderStepList();
+    renderStepDetail();
+    renderSchemaTable();
+    updateRlsSimulation();
+    renderChecklist();
+    updateOverallProgress();
+  </script>
+</body>
+</html>
